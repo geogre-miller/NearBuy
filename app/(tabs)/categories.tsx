@@ -1,64 +1,116 @@
+import { useCategories, useCategoryProducts } from '@/lib/hooks/useCategories';
 import { router } from 'expo-router';
+import { Filter, Grid2x2 as Grid, List, Search } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-
-const products = [
-  { id: '1', name: 'Rau muống tươi', price: '15,000', seller: 'Chị Hoa', rating: 4.8, image: '🥬', location: '2km' },
-  { id: '2', name: 'Cà chua bi', price: '25,000', seller: 'Anh Nam', rating: 4.6, image: '🍅', location: '1.5km' },
-  { id: '3', name: 'Cải thảo', price: '20,000', seller: 'Cô Mai', rating: 4.9, image: '🥬', location: '3km' },
-  { id: '4', name: 'Bí đỏ', price: '18,000', seller: 'Chú Tấn', rating: 4.7, image: '🎃', location: '2.5km' },
-  { id: '5', name: 'Khoai tây', price: '22,000', seller: 'Bà Liên', rating: 4.8, image: '🥔', location: '1km' },
-  { id: '6', name: 'Cà rốt', price: '30,000', seller: 'Anh Dũng', rating: 4.5, image: '🥕', location: '2.2km' },
-];
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function CategoriesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isGridView, setIsGridView] = useState(true);
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const { products, loading: productsLoading, error: productsError, loadMore, hasMore } = useCategoryProducts(selectedCategoryId);
+
+  // Use the first category as default when categories load
+  React.useEffect(() => {
+    if (categories.length > 0 && !selectedCategoryId) {
+      setSelectedCategoryId(categories[0].id);
+    }
+  }, [categories, selectedCategoryId]);
+
+  const selectedCategory = categories.find(cat => cat.id === selectedCategoryId);
 
   const handleProductPress = (product: any) => {
     router.push('../product-detail/');
   };
 
-  const ProductCard = ({ product, isGrid }: { product: any; isGrid: boolean }) => (
-    <TouchableOpacity
-      style={[styles.productCard, isGrid ? styles.gridCard : styles.listCard]}
-      onPress={() => handleProductPress(product)}
-    >
-      <Text style={[styles.productImage, isGrid ? styles.gridImage : styles.listImage]}>
-        {product.image}
-      </Text>
-      <View style={styles.productInfo}>
-        <Text style={styles.productName}>{product.name}</Text>
-        <Text style={styles.productPrice}>{product.price}đ/kg</Text>
-        <View style={styles.sellerRow}>
-          <Text style={styles.sellerName}>{product.seller}</Text>
-          <Text style={styles.location}>📍 {product.location}</Text>
+  const handleCategorySelect = (categoryId: string) => {
+    setSelectedCategoryId(categoryId);
+  };
+
+  const ProductCard = ({ product, isGrid }: { product: any; isGrid: boolean }) => {
+    // Transform database product to display format
+    const displayProduct = {
+      id: product.id,
+      name: product.title,
+      price: product.price?.toLocaleString('vi-VN') || '0',
+      seller: product.profiles?.full_name || 'Người bán',
+      rating: 4.5, // Default rating, you can add this to your database
+      image: product.post_images?.[0]?.image_url ? '🖼️' : product.categories?.icon || '📦',
+      location: product.location || 'Ngọc Hồi'
+    };
+
+    return (
+      <TouchableOpacity
+        style={[styles.productCard, isGrid ? styles.gridCard : styles.listCard]}
+        onPress={() => handleProductPress(product)}
+      >
+        <Text style={[styles.productImage, isGrid ? styles.gridImage : styles.listImage]}>
+          {displayProduct.image}
+        </Text>
+        <View style={styles.productInfo}>
+          <Text style={styles.productName}>{displayProduct.name}</Text>
+          <Text style={styles.productPrice}>{displayProduct.price}đ</Text>
+          <View style={styles.sellerRow}>
+            <Text style={styles.sellerName}>{displayProduct.seller}</Text>
+            <Text style={styles.location}>📍 {displayProduct.location}</Text>
+          </View>
+          <View style={styles.ratingRow}>
+            <Text style={styles.rating}>⭐ {displayProduct.rating}</Text>
+          </View>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity style={styles.buyNowButton}>
+              <Text style={styles.buyNowText}>Mua ngay</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.detailButton} onPress={() => handleProductPress(product)}>
+              <Text style={styles.detailText}>Xem chi tiết</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.ratingRow}>
-          <Text style={styles.rating}>⭐ {product.rating}</Text>
-        </View>
-        <View style={styles.actionButtons}>
-          <TouchableOpacity style={styles.buyNowButton}>
-            <Text style={styles.buyNowText}>Mua ngay</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.detailButton} onPress={() => handleProductPress(product)}>
-            <Text style={styles.detailText}>Xem chi tiết</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Rau củ quả tươi</Text>
+        <Text style={styles.headerTitle}>
+          {selectedCategory?.name || 'Danh mục sản phẩm'}
+        </Text>
+        
+        {/* Category Selector */}
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          style={styles.categorySelector}
+          contentContainerStyle={styles.categorySelectorContent}
+        >
+          {categories.map((category) => (
+            <TouchableOpacity
+              key={category.id}
+              style={[
+                styles.categoryChip,
+                selectedCategoryId === category.id && styles.selectedCategoryChip
+              ]}
+              onPress={() => handleCategorySelect(category.id)}
+            >
+              <Text style={styles.categoryIcon}>{category.icon}</Text>
+              <Text style={[
+                styles.categoryName,
+                selectedCategoryId === category.id && styles.selectedCategoryName
+              ]}>
+                {category.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
         
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Text style={styles.searchIcon}>🔍</Text>
+          <Search size={20} color="#9CA3AF" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm trong danh mục..."
@@ -74,7 +126,7 @@ export default function CategoriesScreen() {
             style={styles.filterButton}
             onPress={() => setShowFilters(!showFilters)}
           >
-            <Text style={styles.iconText}>🔧</Text>
+            <Filter size={20} color="#FF6B35" />
             <Text style={styles.filterText}>Lọc</Text>
           </TouchableOpacity>
           
@@ -83,13 +135,13 @@ export default function CategoriesScreen() {
               style={[styles.viewButton, isGridView && styles.activeViewButton]}
               onPress={() => setIsGridView(true)}
             >
-              <Text style={[styles.iconText, { color: isGridView ? '#FFFFFF' : '#9CA3AF' }]}>⊞</Text>
+              <Grid size={20} color={isGridView ? '#FFFFFF' : '#9CA3AF'} />
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.viewButton, !isGridView && styles.activeViewButton]}
               onPress={() => setIsGridView(false)}
             >
-              <Text style={[styles.iconText, { color: !isGridView ? '#FFFFFF' : '#9CA3AF' }]}>☰</Text>
+              <List size={20} color={!isGridView ? '#FFFFFF' : '#9CA3AF'} />
             </TouchableOpacity>
           </View>
         </View>
@@ -124,18 +176,54 @@ export default function CategoriesScreen() {
       </View>
 
       {/* Products List */}
-      <ScrollView style={styles.productsList} showsVerticalScrollIndicator={false}>
-        <View style={isGridView ? styles.gridContainer : styles.listContainer}>
-          {products.map((product) => (
-            <ProductCard key={product.id} product={product} isGrid={isGridView} />
-          ))}
-        </View>
-        
-        {/* Loading indicator */}
+      {categoriesLoading ? (
         <View style={styles.loadingContainer}>
-          <Text style={styles.loadingText}>Đang tải thêm sản phẩm...</Text>
+          <ActivityIndicator size="large" color="#FF6B35" />
+          <Text style={styles.loadingText}>Đang tải danh mục...</Text>
         </View>
-      </ScrollView>
+      ) : categoriesError ? (
+        <View style={styles.loadingContainer}>
+          <Text style={styles.errorText}>Lỗi: {categoriesError}</Text>
+        </View>
+      ) : (
+        <ScrollView style={styles.productsList} showsVerticalScrollIndicator={false}>
+          {productsLoading && products.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FF6B35" />
+              <Text style={styles.loadingText}>Đang tải sản phẩm...</Text>
+            </View>
+          ) : productsError ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.errorText}>Lỗi: {productsError}</Text>
+            </View>
+          ) : products.length === 0 ? (
+            <View style={styles.loadingContainer}>
+              <Text style={styles.loadingText}>Không có sản phẩm trong danh mục này</Text>
+            </View>
+          ) : (
+            <View style={isGridView ? styles.gridContainer : styles.listContainer}>
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} isGrid={isGridView} />
+              ))}
+            </View>
+          )}
+          
+          {/* Load more button */}
+          {hasMore && products.length > 0 && (
+            <TouchableOpacity 
+              style={styles.loadMoreButton} 
+              onPress={loadMore}
+              disabled={productsLoading}
+            >
+              {productsLoading ? (
+                <ActivityIndicator size="small" color="#FF6B35" />
+              ) : (
+                <Text style={styles.loadMoreText}>Tải thêm sản phẩm</Text>
+              )}
+            </TouchableOpacity>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 }
@@ -367,6 +455,57 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 20,
+    color: '#FF6B35',
+  },
+  categorySelector: {
+    marginBottom: 16,
+  },
+  categorySelectorContent: {
+    paddingHorizontal: 16,
+  },
+  categoryChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 20,
+    marginRight: 12,
+    borderWidth: 1,
+    borderColor: '#E5E5E5',
+  },
+  selectedCategoryChip: {
+    backgroundColor: '#FF6B35',
+    borderColor: '#FF6B35',
+  },
+  categoryIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#6B7280',
+  },
+  selectedCategoryName: {
+    color: '#FFFFFF',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#EF4444',
+    textAlign: 'center',
+  },
+  loadMoreButton: {
+    backgroundColor: '#F5F5F5',
+    paddingVertical: 12,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginVertical: 16,
+  },
+  loadMoreText: {
+    fontSize: 14,
+    fontWeight: '600',
     color: '#FF6B35',
   },
 });

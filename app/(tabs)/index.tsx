@@ -1,18 +1,10 @@
+import { useCategories } from '@/lib/hooks/useCategories';
 import { router } from 'expo-router';
 import { Bell, Search, ShoppingCart } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const { width } = Dimensions.get('window');
-
-const categories = [
-  { id: '1', name: 'Rau củ quả', icon: '🥬', color: '#4CAF50' },
-  { id: '2', name: 'Thịt cá', icon: '🐟', color: '#FF6B35' },
-  { id: '3', name: 'Gạo lương thực', icon: '🌾', color: '#FFC107' },
-  { id: '4', name: 'Đồ khô', icon: '🥜', color: '#8BC34A' },
-  { id: '5', name: 'Gia vị', icon: '🧄', color: '#FF5722' },
-  { id: '6', name: 'Đồ uống', icon: '🥛', color: '#2196F3' },
-];
 
 const featuredProducts = [
   { id: '1', name: 'Rau muống tươi', price: '15,000', seller: 'Chị Hoa', rating: 4.8, image: '🥬' },
@@ -28,9 +20,10 @@ const trustedSellers = [
 
 export default function HomeScreen() {
   const [searchQuery, setSearchQuery] = useState('');
+  const { categories } = useCategories();
 
   const handleCategoryPress = (category: any) => {
-    router.push('./categories');
+    router.push('/(tabs)/categories');
   };
 
   const handleProductPress = (product: any) => {
