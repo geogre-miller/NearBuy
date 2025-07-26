@@ -1,29 +1,35 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
+import { AuthProvider } from '@/lib/context/AuthContext';
 import { Stack } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+import { useEffect } from 'react';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  useFrameworkReady();
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+  useEffect(() => {
+    SplashScreen.hideAsync();
+  }, []);
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <AuthProvider>
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="welcome/index" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="post/[id]" options={{ headerShown: true, title: 'Chi tiết sản phẩm' }} />
+        <Stack.Screen name="post/create" options={{ headerShown: true, title: 'Đăng tin mới' }} />
+        <Stack.Screen name="user/[id]" options={{ headerShown: true, title: 'Hồ sơ người dùng' }} />
+        <Stack.Screen name="chat/[conversationId]" options={{ headerShown: true, title: 'Nhắn tin' }} />
+        <Stack.Screen name="checkout/index" />
+        <Stack.Screen name="product-detail/index" />
         <Stack.Screen name="+not-found" />
       </Stack>
       <StatusBar style="auto" />
-    </ThemeProvider>
+    </AuthProvider>
   );
 }
