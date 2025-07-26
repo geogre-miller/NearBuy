@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
 import { ArrowLeft, MessageCircle, Minus, Plus, ShoppingCart, Star } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Alert, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const { width } = Dimensions.get('window');
+// const { width } = Dimensions.get('window');
 
 const productImages = ['🥬', '🥬', '🥬', '🥬'];
 

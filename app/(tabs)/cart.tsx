@@ -345,4 +345,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Inter-Bold',
   },
+  quantityButtonText: {
+    fontSize: 16,
+    color: '#6B7280',
+  },
+  deleteButtonText: {
+    fontSize: 20,
+    color: '#EF4444',
+  },
 });

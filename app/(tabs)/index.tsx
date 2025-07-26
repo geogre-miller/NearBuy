@@ -354,4 +354,8 @@ const styles = StyleSheet.create({
     fontWeight: 'normal',
     color: '#6B7280',
   },
+  iconText: {
+    fontSize: 20,
+    color: '#FF6B35',
+  },
 });

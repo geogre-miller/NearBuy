@@ -1,7 +1,7 @@
-import { useAuth } from '@/lib/context/AuthContext'
 import { router } from 'expo-router'
 import React from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { useAuth } from '../../lib/context/AuthContext'
 
 export default function WelcomeScreen() {
   const { user } = useAuth()
@@ -14,17 +14,17 @@ export default function WelcomeScreen() {
   }, [user])
 
   const handleRegister = () => {
-    router.push('/register' as any)
+    router.push('/(auth)/register')
   }
 
   const handleLogin = () => {
-    router.push('/login' as any)
+    router.push('/(auth)/login')
   }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.header}>
-        <Text style={styles.title}>SMTOWN</Text>
+        <Text style={styles.title}>GẦN NHÀ</Text>
         <Text style={styles.subtitle}>Chợ trực tuyến Ngọc Hồi</Text>
         <Text style={styles.description}>
           Nơi mua bán, trao đổi hàng hóa an toàn và tiện lợi trong cộng đồng

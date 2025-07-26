@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import { ArrowLeft, CreditCard, MapPin, Truck } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -52,7 +51,7 @@ export default function CheckoutScreen() {
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <ArrowLeft size={24} color="#1F2937" />
+          <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Thanh toán</Text>
       </View>
@@ -61,7 +60,7 @@ export default function CheckoutScreen() {
         {/* Delivery Address */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <MapPin size={20} color="#FF6B35" />
+            <Text style={styles.sectionIcon}>📍</Text>
             <Text style={styles.sectionTitle}>Địa chỉ giao hàng</Text>
           </View>
           
@@ -130,7 +129,7 @@ export default function CheckoutScreen() {
         {/* Payment Method */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <CreditCard size={20} color="#FF6B35" />
+            <Text style={styles.sectionIcon}>💳</Text>
             <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
           </View>
           
@@ -190,7 +189,7 @@ export default function CheckoutScreen() {
         {/* Delivery Info */}
         <View style={styles.section}>
           <View style={styles.deliveryInfo}>
-            <Truck size={20} color="#4CAF50" />
+            <Text style={styles.sectionIcon}>🚚</Text>
             <Text style={styles.deliveryText}>
               Dự kiến giao hàng trong 30-60 phút
             </Text>
@@ -464,5 +463,13 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 18,
     fontFamily: 'Inter-Bold',
+  },
+  backIcon: {
+    fontSize: 24,
+    color: '#1F2937',
+  },
+  sectionIcon: {
+    fontSize: 20,
+    marginRight: 8,
   },
 });

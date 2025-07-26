@@ -1,5 +1,4 @@
 import { router } from 'expo-router';
-import { Filter, Grid2x2 as Grid, List, Search } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
@@ -59,7 +58,7 @@ export default function CategoriesScreen() {
         
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Search size={20} color="#9CA3AF" style={styles.searchIcon} />
+          <Text style={styles.searchIcon}>🔍</Text>
           <TextInput
             style={styles.searchInput}
             placeholder="Tìm trong danh mục..."
@@ -75,7 +74,7 @@ export default function CategoriesScreen() {
             style={styles.filterButton}
             onPress={() => setShowFilters(!showFilters)}
           >
-            <Filter size={20} color="#FF6B35" />
+            <Text style={styles.iconText}>🔧</Text>
             <Text style={styles.filterText}>Lọc</Text>
           </TouchableOpacity>
           
@@ -84,13 +83,13 @@ export default function CategoriesScreen() {
               style={[styles.viewButton, isGridView && styles.activeViewButton]}
               onPress={() => setIsGridView(true)}
             >
-              <Grid size={20} color={isGridView ? '#FFFFFF' : '#9CA3AF'} />
+              <Text style={[styles.iconText, { color: isGridView ? '#FFFFFF' : '#9CA3AF' }]}>⊞</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.viewButton, !isGridView && styles.activeViewButton]}
               onPress={() => setIsGridView(false)}
             >
-              <List size={20} color={!isGridView ? '#FFFFFF' : '#9CA3AF'} />
+              <Text style={[styles.iconText, { color: !isGridView ? '#FFFFFF' : '#9CA3AF' }]}>☰</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -365,5 +364,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'normal',
     color: '#9CA3AF',
+  },
+  iconText: {
+    fontSize: 20,
+    color: '#FF6B35',
   },
 });

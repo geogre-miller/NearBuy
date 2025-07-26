@@ -1,4 +1,3 @@
-import { CircleCheck as CheckCircle, Clock, Star, Truck } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -59,28 +58,28 @@ export default function OrdersScreen() {
     switch (status) {
       case 'preparing':
         return { 
-          icon: <Clock size={20} color="#FFC107" />, 
+          icon: <Text style={styles.statusIcon}>⏰</Text>, 
           text: 'Đang chuẩn bị', 
           color: '#FFC107',
           bgColor: '#FFF8E1' 
         };
       case 'shipping':
         return { 
-          icon: <Truck size={20} color="#2196F3" />, 
+          icon: <Text style={styles.statusIcon}>🚚</Text>, 
           text: 'Đang giao hàng', 
           color: '#2196F3',
           bgColor: '#E3F2FD' 
         };
       case 'delivered':
         return { 
-          icon: <CheckCircle size={20} color="#4CAF50" />, 
+          icon: <Text style={styles.statusIcon}>✅</Text>, 
           text: 'Đã giao hàng', 
           color: '#4CAF50',
           bgColor: '#E8F5E8' 
         };
       default:
         return { 
-          icon: <Clock size={20} color="#9CA3AF" />, 
+          icon: <Text style={styles.statusIcon}>⏰</Text>, 
           text: 'Không xác định', 
           color: '#9CA3AF',
           bgColor: '#F5F5F5' 
@@ -149,7 +148,7 @@ export default function OrdersScreen() {
         <View style={styles.actionButtons}>
           {order.status === 'delivered' ? (
             <TouchableOpacity style={styles.reviewButton}>
-              <Star size={16} color="#FFFFFF" />
+              <Text style={styles.buttonIcon}>⭐</Text>
               <Text style={styles.reviewButtonText}>Đánh giá đơn hàng</Text>
             </TouchableOpacity>
           ) : (
@@ -400,5 +399,13 @@ const styles = StyleSheet.create({
     color: '#6B7280',
     fontSize: 14,
     fontWeight: '600',
+  },
+  statusIcon: {
+    fontSize: 20,
+  },
+  buttonIcon: {
+    fontSize: 16,
+    color: '#FFFFFF',
+    marginRight: 4,
   },
 });

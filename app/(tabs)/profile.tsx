@@ -1,4 +1,3 @@
-import { Clock, CircleHelp as HelpCircle, LogOut, MapPin, Settings, Star, User } from 'lucide-react-native';
 import React from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -101,7 +100,7 @@ export default function ProfileScreen() {
         </View>
         
         <TouchableOpacity style={styles.editButton} onPress={handleEditProfile}>
-          <Settings size={16} color="#FF6B35" />
+          <Text style={styles.editIcon}>⚙️</Text>
           <Text style={styles.editButtonText}>Chỉnh sửa</Text>
         </TouchableOpacity>
       </View>
@@ -109,14 +108,14 @@ export default function ProfileScreen() {
       {/* Menu Sections */}
       <MenuSection title="Thông tin cá nhân">
         <MenuItem
-          icon={<User size={20} color="#FF6B35" />}
+          icon={<Text style={styles.menuIconText}>👤</Text>}
           title="Thông tin tài khoản"
           subtitle="Cập nhật thông tin cá nhân"
           onPress={handleEditProfile}
         />
         
         <MenuItem
-          icon={<MapPin size={20} color="#4CAF50" />}
+          icon={<Text style={styles.menuIconText}>📍</Text>}
           title="Địa chỉ giao hàng"
           subtitle="Quản lý địa chỉ nhận hàng"
           onPress={handleAddresses}
@@ -125,14 +124,14 @@ export default function ProfileScreen() {
 
       <MenuSection title="Đơn hàng">
         <MenuItem
-          icon={<Clock size={20} color="#2196F3" />}
+          icon={<Text style={styles.menuIconText}>⏰</Text>}
           title="Lịch sử mua hàng"
           subtitle="Xem tất cả đơn hàng đã đặt"
           onPress={() => console.log('Order history')}
         />
         
         <MenuItem
-          icon={<Star size={20} color="#FFC107" />}
+          icon={<Text style={styles.menuIconText}>⭐</Text>}
           title="Đánh giá của tôi"
           subtitle="Quản lý đánh giá sản phẩm"
           onPress={() => console.log('Reviews')}
@@ -141,7 +140,7 @@ export default function ProfileScreen() {
 
       <MenuSection title="Hỗ trợ">
         <MenuItem
-          icon={<HelpCircle size={20} color="#6B7280" />}
+          icon={<Text style={styles.menuIconText}>❓</Text>}
           title="Trung tâm hỗ trợ"
           subtitle="FAQ, liên hệ, hướng dẫn sử dụng"
           onPress={handleSupport}
@@ -151,7 +150,7 @@ export default function ProfileScreen() {
       {/* Logout */}
       <View style={styles.logoutSection}>
         <MenuItem
-          icon={<LogOut size={20} color="#EF4444" />}
+          icon={<Text style={styles.menuIconText}>🚪</Text>}
           title="Đăng xuất"
           onPress={handleLogout}
           showArrow={false}
@@ -355,5 +354,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Inter-Regular',
     color: '#9CA3AF',
+  },
+  editIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  menuIconText: {
+    fontSize: 20,
   },
 });
